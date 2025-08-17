@@ -1,0 +1,20 @@
+# Core dependencies
+streamlit
+pandas
+numpy
+
+# Visualization libraries
+plotly
+seaborn
+matplotlib
+
+# File handling
+openpyxl  # For reading .xlsx files
+
+# LangChain and Google Generative AI
+langchain
+langchain-google-genai
+google-generativeai
+
+# Environment variable management
+python-dotenv
