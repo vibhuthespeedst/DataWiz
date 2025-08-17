@@ -3,7 +3,7 @@
 
 An interactive and intelligent Streamlit-based data analysis tool powered by **Google's Gemini AI** via **LangChain**. Upload your datasets, get instant statistics, visualizations, and ask natural language questions about your data — all in one app.
 
-# Link - https://datawiz-kkttx4i4oy5w38jueeggo9.streamlit.app/
+## Link - https://datawiz-kkttx4i4oy5w38jueeggo9.streamlit.app/
 ---
 
 ## 🚀 Features
