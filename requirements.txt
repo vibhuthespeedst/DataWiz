@@ -2,19 +2,19 @@
 streamlit
 pandas
 numpy
+python-dotenv
 
 # Visualization libraries
 plotly
 seaborn
 matplotlib
+openpyxl
 
-# File handling
-openpyxl  # For reading .xlsx files
-
-# LangChain and Google Generative AI
+# LangChain + Google generative
 langchain
 langchain-google-genai
+langchain-core
 google-generativeai
 
-# Environment variable management
-python-dotenv
+
+# pydantic<2
