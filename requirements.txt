@@ -1,20 +1,10 @@
-# Core dependencies
-streamlit
-pandas
-numpy
-python-dotenv
-
-# Visualization libraries
-plotly
-seaborn
-matplotlib
-openpyxl
-
-# LangChain + Google generative
-langchain
-langchain-google-genai
-langchain-core
-google-generativeai
-
-
-# pydantic<2
+streamlit>=1.50
+pandas>=2.2
+numpy>=1.26
+plotly>=5.24
+openpyxl>=3.1
+xlrd>=2.0
+python-dotenv>=1.0
+scikit-learn>=1.5
+langchain-core>=1.0,<2
+langchain-google-genai>=4.0,<5

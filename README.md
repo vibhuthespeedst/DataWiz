@@ -1,118 +1,68 @@
+# DataWiz
 
-# 📊 Data Insights AI Assistant
+Upload a CSV or Excel file, explore it, and ask questions about it in plain English. Built with Streamlit, LangChain and Gemini.
 
-An interactive and intelligent Streamlit-based data analysis tool powered by **Google's Gemini AI** via **LangChain**. Upload your datasets, get instant statistics, visualizations, and ask natural language questions about your data — all in one app.
+Live app: https://datawiz-kkttx4i4oy5w38jueeggo9.streamlit.app/
 
-## Link - https://datawiz-kkttx4i4oy5w38jueeggo9.streamlit.app/
----
+## What it does
 
-## 🚀 Features
+- **Overview:** row and column counts, missing values, duplicates, column types and quick charts.
+- **Chat:** ask things like "which region has the highest total revenue?" or "show monthly revenue as a table" and get answers computed from your data.
+- **Insights:** summary statistics, the most common values in each text column, and preprocessing suggestions from Gemini.
+- **Graphs:** scatter, line, bar, histogram, box, violin, correlation heatmap and pair plots, plus filters and a CSV download of the matching rows.
 
-- **📁 Upload Support**  
-  Upload `.csv`, `.xlsx`, or `.xls` files for analysis.
+There's a built-in sample sales table, so you can try it without uploading anything.
 
-- **📈 Overview Tab**  
-  View dataset shape, data types, missing values, duplicate rows, correlation matrix, distributions, and more.
+## How the chat answers
 
-- **💬 Chat Assistant**  
-  Ask questions about your data using natural language. Powered by Gemini 1.5 via LangChain.
+Each question goes through two steps:
 
-- **🔍 Insights Tab**  
-  Auto-generated basic and advanced statistical insights, categorical analysis, and ML preprocessing recommendations.
+1. **Retrieval (RAG).** The table is indexed once with TF-IDF: one document per column profile (type, missing values, range or top values) and one per row. The question pulls in the most relevant columns and rows, which go into the prompt with a summary of the whole table.
+2. **Tool calls.** Gemini can call four pandas tools: `aggregate` (count, sum, mean, median, min, max, distinct, with grouping, filters and monthly or yearly buckets), `filter_rows`, `value_counts` and `correlation`. The math runs in pandas, so numbers come from the data rather than the model. The model only chooses tools and arguments; nothing it writes is run as code.
 
-- **📊 Interactive Graphs**  
-  Create scatter plots, line charts, bar charts, histograms, box plots, violin plots, pair plots, and heatmaps. Filter data interactively.
+Under each answer, "How this was answered" shows the retrieved columns and every tool call with its result.
 
----
+## Run it locally
 
-## 🧠 Powered By
-
-- **🧠 Gemini 1.5 (via LangChain)**
-- **📦 Streamlit**
-- **📉 Plotly**
-- **📊 Seaborn / Matplotlib**
-- **🧪 Pandas / NumPy**
-- **🌐 Dotenv for API key management**
-
----
-
-## 📂 Folder Structure
+Requires Python 3.11 or newer.
 
 ```bash
-├── app.py              # Main Streamlit app
-├── .env                # Store your Google API key here
-├── requirements.txt    # All required Python dependencies
-└── README.md           # This file
-```
-🔐 Environment Setup
-Create a .env file in the root directory with your Google API key:
-
-GOOGLE_API_KEY=your_google_genai_key
-🔑 You must have access to Google Gemini API via Google AI Studio or [Vertex AI].
-
-🧪 Installation
-🔧 Step-by-step
-
-# 1. Clone the repository
-git clone https://github.com/your-username/data-insights-ai-assistant.git
-cd data-insights-ai-assistant
-
-# 2. Create a virtual environment (optional but recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# 3. Install dependencies
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-▶️ Run the App
+echo "GOOGLE_API_KEY=your-key" > .env
 streamlit run app.py
-## 🖼️ Screenshots
+```
 
-## 🧾 Overview Tab
+Get a key from [Google AI Studio](https://aistudio.google.com/apikey). Without a key, everything except chat and the preprocessing suggestions still works.
 
-🤖 Chat Assistant
+## Configuration
 
-📊 Interactive Graphs
+| Variable | Default | |
+|---|---|---|
+| `GOOGLE_API_KEY` | none | Gemini API key, from `.env`, the environment or Streamlit secrets |
+| `GEMINI_MODEL` | `gemini-flash-latest` | Any Gemini chat model that supports tool calling |
 
-🧠 Example Prompts for Chat Assistant
-"What is the average salary across departments?"
+On Streamlit Community Cloud, add `GOOGLE_API_KEY` under the app's Settings → Secrets.
 
-"Suggest preprocessing steps for building a classification model."
+## Tests
 
-"Are there any correlations between age and purchase amount?"
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
 
-"Which categories have the highest frequency?"
+The tests check the pandas tools against plain pandas, retrieval, the chat loop (with a scripted stand-in for Gemini) and that every tab and chart renders.
 
-## 📦 Requirements
-txt
-Copy
-Edit
-streamlit
-pandas
-numpy
-plotly
-matplotlib
-seaborn
-langchain
-langchain-google-genai
-python-dotenv
-openpyxl
+## Layout
 
-## 🙌 Acknowledgements
-LangChain
-
-Google Gemini
-
-Streamlit
-
-Plotly
-
-## 💡 Future Improvements
-Add support for uploading multiple files
-
-Enable export of visualizations
-
-Add session saving and report generation
-
-Improve multilingual chat support
-
-Built with ❤️ by Vibhu Mishra – Contributions Welcome!
+```
+app.py              Streamlit UI
+stremlit.py         old entry point, kept for the existing deployment; runs app.py
+datawiz/
+  profile.py        column types, column profiles, sample data
+  retrieval.py      TF-IDF index over column profiles and rows
+  tools.py          pandas tools the model can call
+  chat.py           prompt, tool-calling loop, Gemini setup
+tests/
+```
